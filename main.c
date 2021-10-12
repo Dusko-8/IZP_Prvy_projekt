@@ -3,16 +3,41 @@
 #include <stdbool.h>
 #include <string.h>
 
-
+//funkcia ktora dostane z argv char a vrati int s overenim pre level
 int getIntLevel(char *argv){
     char *endptr;
     int i = strtoul(argv,&endptr,10);
 
+    if(endptr[0] != '\0'){
+      fprintf(stderr,"Parameter Level musi byt cele kladne cislo  \n");
+      return -1;
+    }
+    if(i>4 || i<1){
+      fprintf(stderr,"Parameter Level sa ma nachadzat v rozmedzi od 1 - 4  \n");
+
+      return -1;
+    }
+    
     
 
     return i;
   }
-int getCharParametre(char *argv){
+//funkcia ktora dostane z argv char a vrati int s overenim pre param
+int getIntParam(char *argv){
+    char *endptr;
+    int i = strtoul(argv,&endptr,10);
+
+    if(endptr[0] != '\0' || i<=0){
+      fprintf(stderr,"Parameter  musi byt cele kladne cislo  \n");
+      return -1;
+    }
+    
+
+    return i;
+  }
+
+
+/*int getCharParametre(char *argv){
     char *endptr;
     char str1[] = strtoul(argv,&endptr,10);
     char str2[] = "--stats";
@@ -22,7 +47,7 @@ int getCharParametre(char *argv){
     }
     
     return 0;
-  }
+  }*/
 
 int main(int argc, char *argv[])
 {
@@ -46,8 +71,9 @@ int main(int argc, char *argv[])
 
   //nacitanie parametrov
   if(argc > 2 && argc < 4){
-    level = getIntParametre(argv[1]);
-    param = getIntParametre(argv[2]);
+    level = getIntLevel(argv[1]);
+    param = getIntParam(argv[2]);
+
     /*if (getCharParametre(argv[3]))
     {
       bool stats = true;
