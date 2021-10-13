@@ -36,18 +36,34 @@ int getIntParam(char *argv){
     return i;
   }
 
+char* getCharStats(char *argv){
+  char str1[] = "--stats";
+  char *str2 = {argv}; 
+ 
+  //str2[1] = strdup(argv[3]);
+  //porovnajChar(str1,str2); 
+  
+  return str2;
+}
 
-/*int getCharParametre(char *argv){
-    char *endptr;
-    char str1[] = strtoul(argv,&endptr,10);
-    char str2[] = "--stats";
-    if (strcmpr(str1,str2)==0)
-    {
-      return 1;
-    }
-    
-    return 0;
-  }*/
+bool porovnajChar(char str1[], char str2[]){
+  int size1 = sizeof(str1) / sizeof(str1[0]);
+  printf("size %d\n", size1);
+  
+  /*if (true)
+  {
+    /* code 
+  }
+  
+  for (size_t i = 0; i < count; i++)
+  {
+    /* code 
+  }
+  */
+  
+
+
+}
 
 int main(int argc, char *argv[])
 {
@@ -70,9 +86,12 @@ int main(int argc, char *argv[])
   bool stats = false;
 
   //nacitanie parametrov
-  if(argc > 2 && argc < 4){
+  if(argc > 2 && argc < 5){
     level = getIntLevel(argv[1]);
     param = getIntParam(argv[2]);
+    getCharStats(argv[3]);
+    char str1[] = "Ahoj";
+    porovnajChar(str1,str1);
 
     /*if (getCharParametre(argv[3]))
     {
