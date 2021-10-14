@@ -46,20 +46,29 @@ char* getCharStats(char *argv){
   return str2;
 }
 
-bool porovnajChar(char str1[], char str2[]){
-  int size1 = sizeof(str1) / sizeof(str1[0]);
-  printf("size %d\n", size1);
-  
-  /*if (true)
+bool porovnajChar(char *str1, char *str2){
+  //int size1 = sizeof(str1) / sizeof(str1[0]); 
+  printf("str 1 %s\n",&str1[2]);
+  printf("str 2 %s\n",&str2[1]);
+  for (int i = 1;str1[i] == '\0' || str2[i] == '\0';i++)
   {
-    /* code 
+      if (str1[i] == str2[i]){
+        printf("str - %i -- %s\n",&i,&str1[i]);
+        printf("str - %i -- %s\n",&i,&str2[i]);
+        if (str1[i+1] == '\0' && str2[i+1] == '\0')
+        {
+          return true;
+        }else 
+        {
+          return false;
+        }
+        
+         i++;
+    }else{
+      return false;
+    }
   }
   
-  for (size_t i = 0; i < count; i++)
-  {
-    /* code 
-  }
-  */
   
 
 
@@ -90,8 +99,25 @@ int main(int argc, char *argv[])
     level = getIntLevel(argv[1]);
     param = getIntParam(argv[2]);
     getCharStats(argv[3]);
-    char str1[] = "Ahoj";
-    porovnajChar(str1,str1);
+    char *str1 = "Ahogjh";
+    char *str2 = "Ahoj";
+
+    if(str1[0] == str2[0]){
+      printf("-Rovnaju sa\n");
+
+    }else{
+      printf("Neovnajusa\n");
+    }
+    
+
+    printf("----------------------\n");
+    if(porovnajChar(str1,str2)==true){
+      printf("rovnaju sa\n");
+    }else
+    {
+      printf("nerovnaju\n");
+    }
+    
 
     /*if (getCharParametre(argv[3]))
     {
