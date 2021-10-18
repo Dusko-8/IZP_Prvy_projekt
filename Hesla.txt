@@ -3,3 +3,18 @@ Password
 Heslo123
 Mojevelmidlouhehesloscislem0
 IZP2021:fit@vut.cz
+// function returns true or false based on if the strings are the same
+/*bool compareChar(char array1[], char array2[]){
+  int i;
+  bool response = false;
+  i = 0;
+  //prejde kazdym prvkom char pola a porovna jednolive pozicie
+  while(array1[i] == array2[i] && response == 0 ){
+    if(array1[i] == '\0' || array2[i] == '\0'){
+      response = true;
+    }
+    i++;
+  }
+
+  return response;
+}*/
