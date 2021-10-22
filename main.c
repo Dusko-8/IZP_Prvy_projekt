@@ -1,3 +1,7 @@
+/*
+ *Progr
+ */
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,8 +59,7 @@ bool getBoolStats(char *array1) {
   return response;
 }
 /*
- *this function checks if the parameter has the right properties in security
- *level1
+ *this function checks if the password has small and capitall characters.
  */
 bool checkLevel1(char row[]) {
   int counter = 0;
@@ -80,13 +83,13 @@ bool checkLevel1(char row[]) {
 }
 /*
  *this function checks if the parameter has the right properties in security
- *level 1 & 2
+ *level 1 & based on param if the password contains numbers or special charcters
  */
 bool checkLevel2(char row[], int param) {
   bool result = false;
   bool number = false;
   bool specialchar = false;
-
+  printf("parameter v leveli 2 %i\n", param);
   if (param == 2 || param == 1) {
     if (checkLevel1(row) == true) {
       result = true;
@@ -105,15 +108,13 @@ bool checkLevel2(char row[], int param) {
   }
 
   if (param >= 4) {
-    //printf("---------%s\n", row);
+
     for (int i = 0; row[i] != '\0'; i++) {
       if (row[i] >= '0' && row[i] <= '9') {
         number = true;
       }
-      if (row[i] >= ' ' && row[i] <= '/' ||
-          row[i] >= ':' && row[i] <= '@' ||
-          row[i] >= '[' && row[i] <= '`' ||
-          row[i] >= '{' && row[i] <= '~') {
+      if (row[i] >= ' ' && row[i] <= '/' || row[i] >= ':' && row[i] <= '@' ||
+          row[i] >= '[' && row[i] <= '`' || row[i] >= '{' && row[i] <= '~') {
         specialchar = true;
       }
     }
@@ -127,13 +128,76 @@ bool checkLevel2(char row[], int param) {
 
   return result;
 }
+/*
+ *this function checks if the parameter has the right properties in security
+ *level 1 & 2 & dosn t contain x same chrs in a row
+ */
+bool checkLevel3(char row[], int param) {
+  int count = 0;
+  bool result = true;
 
+  for (int i = 0; row[i + 1] != '\0'; i++) {
+    if (row[i] == row[i + 1] && count < param) {
+      count++;
+    }
+    if (count >= (param - 1)) {
+      result = false;
+    }
+
+    if (row[i] != row[i + 1]) {
+      count = 0;
+    }
+  }
+
+  if (checkLevel1(row) && checkLevel2(row, param)) {
+    result = true;
+    return result;
+  } else {
+    result = false;
+    return result;
+  }
+}
+/*
+ *this function checks if the parameter has the right properties in security
+ *level 1 & 2 & 3 & dosnt contain substring of length param
+ */
+bool checkLevel4(char row[], int param) {
+  bool result;
+  int count = 1;
+  //char actSubstring[param];
+
+  printf("----------level4-heslo>%s", row);
+ 
+  for (int i = 0; row[i] != '\0'; i++) {
+    printf("I-row[%c]\n",row[i]);
+    for (int j = i+1; row[j] != '\0'; j++) {
+      printf("J-row[%c]\n",row[j]);
+      if (row[i] == row[j]) {
+        int k = i + 1;
+        int l = j + 1;
+        while (row[k] == row[l] && k < param) {
+          printf("k---%d",k);
+          k++;
+          l++;
+        }
+        if (k == param) {
+          printf("FALSE\n");
+          result = false;
+          return result;
+        }
+      }
+    }
+  }
+  printf("TRUE\n");
+  result = true;
+  return result;
+}
 int main(int argc, char *argv[]) {
   printf("------------------------------------\n");
   printf("Number of arguments: %d\n", argc);
 
-  int level = 2;
-  int param = 8;
+  int level = 4;
+  int param = 4;
   bool stats;
 
   // nacitanie parametrov
@@ -163,6 +227,16 @@ int main(int argc, char *argv[]) {
     case 2:
       if (checkLevel2(row, param)) {
         printf("heslo- %s splnuje lvl 2 param -%i\n", row, param);
+      }
+      break;
+    case 3:
+      if (checkLevel3(row, param)) {
+        printf("heslo- %s splnuje lvl 3 param -%i\n", row, param);
+      }
+      break;
+    case 4:
+      if (checkLevel4(row, param)) {
+        printf("heslo- %s splnuje lvl 4 param -%i\n", row, param);
       }
       break;
 
