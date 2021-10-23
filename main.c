@@ -1,11 +1,10 @@
 /*
- *Progr
+ *Programed by Dušan Slúka
+ *xsluka00
  */
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 /*
  *function which returns Level int to main
  */
@@ -16,12 +15,12 @@ int getIntLevel(char *argv) {
   // here program checks if the int we want passes our requirements
   if (endptr[0] != '\0') {
     fprintf(stderr, "Parameter Level musi byt cele kladne cislo  \n");
-    return -1;
+    return 0;
   }
   if (i > 4 || i < 1) {
     fprintf(stderr, "Parameter Level sa ma nachadzat v rozmedzi od 1 - 4  \n");
 
-    return -1;
+    return 0;
   }
 
   return i;
@@ -33,9 +32,14 @@ int getIntParam(char *argv) {
   char *endptr;
   int i = strtoul(argv, &endptr, 10);
 
-  if (endptr[0] != '\0' || i <= 0) {
+  if (endptr[0] != '\0'){
     fprintf(stderr, "Parameter  musi byt cele kladne cislo  \n");
-    return -1;
+    return 0;
+  }
+  //TO DO
+  if(i < 0 || i == 0){
+    fprintf(stderr, "Parameter  musi byt cele kladne cislo  \n");
+    return 0;
   }
 
   return i;
@@ -47,15 +51,19 @@ bool getBoolStats(char *array1) {
   int i = 0;
   char array2[] = "--stats";
   bool response = false;
-
+  
+  //printf("array1-%c\n",array1[i]);}
   // prejde kazdym prvkom char pola a porovna jednolive pozicie
-  while (array1[i] == array2[i] && response == 0) {
-    if (array1[i] == '\0' || array2[i] == '\0') {
+  while (array1[i] == array2[i]) {
+    if (array1[i] == '\0' && array2[i] == '\0') {
       response = true;
     }
     i++;
   }
-
+  if(response == false){
+    fprintf(stderr, "--stats sa nezhoduje  \n");
+  }
+  
   return response;
 }
 /*
@@ -89,7 +97,7 @@ bool checkLevel2(char row[], int param) {
   bool result = false;
   bool number = false;
   bool specialchar = false;
-  printf("parameter v leveli 2 %i\n", param);
+  
   if (param == 2 || param == 1) {
     if (checkLevel1(row) == true) {
       result = true;
@@ -118,9 +126,6 @@ bool checkLevel2(char row[], int param) {
         specialchar = true;
       }
     }
-    /*printf("level 1-%s\n", checkLevel1(row) ? "true" : "false");
-    printf("cislo 2-%s\n", number ? "true" : "false");
-    printf("special 3-%s\n", specialchar ? "true" : "false");*/
     if (checkLevel1(row) && number && specialchar) {
       result = true;
     }
@@ -149,13 +154,12 @@ bool checkLevel3(char row[], int param) {
     }
   }
 
-  if (checkLevel1(row) && checkLevel2(row, param)) {
+  if (checkLevel1(row) && checkLevel2(row, param) && result) {
     result = true;
-    return result;
   } else {
     result = false;
-    return result;
   }
+  return result;
 }
 /*
  *this function checks if the parameter has the right properties in security
@@ -166,83 +170,159 @@ bool checkLevel4(char row[], int param) {
   int count = 1;
   //char actSubstring[param];
 
-  printf("----------level4-heslo>%s", row);
+  //printf("----------level4-heslo>%s", row);
  
   for (int i = 0; row[i] != '\0'; i++) {
-    printf("I-row[%c]\n",row[i]);
+    //printf("I-row[%c]\n",row[i]);
     for (int j = i+1; row[j] != '\0'; j++) {
-      printf("J-row[%c]\n",row[j]);
+      //printf("J-row[%c]\n",row[j]);
       if (row[i] == row[j]) {
         int k = i + 1;
+        int count = 1;
         int l = j + 1;
-        while (row[k] == row[l] && k < param) {
-          printf("k---%d",k);
+        while (row[k] == row[l] && count < param) {
+         // printf("-----K---%d",k);
+          count++;
           k++;
           l++;
         }
-        if (k == param) {
-          printf("FALSE\n");
+        if (count == param) {
+          //printf("FALSE\n");
           result = false;
           return result;
         }
       }
     }
   }
-  printf("TRUE\n");
-  result = true;
+ // printf("TRUE\n");
+  if(checkLevel1(row) && checkLevel2(row,param)&&checkLevel3(row,param)){
+   result = true; 
+  }else{
+    result = false;
+  }
+  
   return result;
 }
-int main(int argc, char *argv[]) {
-  printf("------------------------------------\n");
-  printf("Number of arguments: %d\n", argc);
 
-  int level = 4;
-  int param = 4;
+void vypisStats(int shortestPass,double countChar,double countPass,int difChars){
+  double avg = countChar/countPass; 
+  printf("Statistika:\n");
+  printf("Ruznych znaku: %d\n",difChars);
+  printf("Minimalni delka: %d\n",shortestPass);
+  printf("Prumerna delka: %.1lf\n",avg);
+}
+
+int main(int argc, char *argv[]) {
+
+  //Variables for parameters
+  int level;
+  int param;
   bool stats;
 
-  // nacitanie parametrov
-  /*if (argc > 2 && argc < 5) {
+  //Variables Stats
+  int shortestPass = 100;
+  double countChar = 0;
+  double countPass = 0;
+ 
+  bool exists = false;
+  char diffCharsarray[128];
+  int difcharcounter = 0;
 
-    //level = getIntLevel(argv[1]);
-    //param = getIntParam(argv[2]);
-    //stats = getBoolStats(argv[3]);
+  // load params from argv
+  if (argc > 2 && argc < 5) {
+    
+    if(argc == 4){
+    stats = getBoolStats(argv[3]);
+    if(stats == false){
+      return 1;
+      }
+    } 
+    
+    level = getIntLevel(argv[1]);
+    if(level == 0){
+      return 1;
+    }
+    param = getIntParam(argv[2]);
+    if(param == 0){
+      return 2;
+    }
 
-  } else {
-    printf("Zly pocet parametrov \n");
-  }*/
+  }else {
+    fprintf(stderr,"Zly pocet parametrov \n");
+    return 3;
+  }
 
-  printf("level- %d param- %d stats- %d \n", level, param, stats);
-  printf("------------------------------------\n");
   char row[101];
   int counter = 0;
+  //fprintf(stdout, "STARTED!");
+  while (fgets(row, 102, stdin) != NULL) {
+    /*if(row[102] >=' '){
+      fprintf(stderr,"Password bigger than 100 chars.");
 
-  while (fgets(row, 101, stdin) != NULL) {
-
+      }*/
+    
+    
     switch (level) {
     case 1:
       if (checkLevel1(row)) {
-        printf("heslo ma velke aj male znaky-%s\n", row);
+        //printf("heslo- %s splnuje lvl 1 param -%i\n", row, param);
+        fprintf(stdout,"%s",row);
       }
       break;
     case 2:
       if (checkLevel2(row, param)) {
-        printf("heslo- %s splnuje lvl 2 param -%i\n", row, param);
+        fprintf(stdout,"%s",row);
+        //printf("heslo- %s splnuje lvl 2 param -%i\n", row, param);
       }
       break;
     case 3:
       if (checkLevel3(row, param)) {
-        printf("heslo- %s splnuje lvl 3 param -%i\n", row, param);
+        fprintf(stdout,"%s",row);
+        //printf("heslo- %s splnuje lvl 3 param -%i\n", row, param);
       }
       break;
     case 4:
       if (checkLevel4(row, param)) {
-        printf("heslo- %s splnuje lvl 4 param -%i\n", row, param);
+        fprintf(stdout,"%s",row);
+        //printf("heslo- %s splnuje lvl 4 param -%i\n", row, param);
       }
       break;
-
-    default:
-      break;
     }
+    if(stats){
+      countPass++;
+      //findes shortest password and counts all chars
+      for(int i = 0; row[i] != '\n';i++){ 
+        if(row[i+1] == '\n'){
+          countChar += i+1;
+        }           
+        if(row[i+1] == '\n' && i <= shortestPass){
+          shortestPass = i+1;
+          
+        }
+         
+      }
+      //this section findes if the password contains new character whitch array dosbt contain
+      for(int i = 0; row[i] != '\n';i++){
+        for(int j = 0;j<difcharcounter;j++){
+          if(row[i] == diffCharsarray[j]){
+            exists = true;
+          }
+          
+        }
+        if(exists == false){
+          diffCharsarray[difcharcounter] = row[i];
+          difcharcounter++;
+        }
+        exists = false;
+      }
+     
+        
+
+    }
+  }
+  
+  if(stats){
+    vypisStats(shortestPass,countChar,countPass,difcharcounter);
   }
 
   return 0;
