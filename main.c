@@ -10,7 +10,7 @@
  */
 int getIntLevel(char *argv) {
   char *endptr;
-  int i = strtoul(argv, &endptr, 10);
+  int i = strtol(argv, &endptr, 10);
 
   // here program checks if the int we want passes our requirements
   if (endptr[0] != '\0') {
@@ -30,14 +30,14 @@ int getIntLevel(char *argv) {
  */
 int getIntParam(char *argv) {
   char *endptr;
-  int i = strtoul(argv, &endptr, 10);
+  int i = strtol(argv, &endptr, 10);
 
   if (endptr[0] != '\0'){
     fprintf(stderr, "Parameter  musi byt cele kladne cislo  \n");
     return 0;
   }
   //TO DO
-  if(i < 0 || i == 0){
+  if(i <= 0 ){
     fprintf(stderr, "Parameter  musi byt cele kladne cislo  \n");
     return 0;
   }
@@ -205,7 +205,10 @@ bool checkLevel4(char row[], int param) {
 }
 
 void vypisStats(int shortestPass,double countChar,double countPass,int difChars){
-  double avg = countChar/countPass; 
+  double avg = countChar/countPass;
+  if(shortestPass == 101){
+    shortestPass = 0;
+  } 
   printf("Statistika:\n");
   printf("Ruznych znaku: %d\n",difChars);
   printf("Minimalni delka: %d\n",shortestPass);
@@ -220,14 +223,16 @@ int main(int argc, char *argv[]) {
   bool stats;
 
   //Variables Stats
-  int shortestPass = 100;
+  int shortestPass = 101;
   double countChar = 0;
   double countPass = 0;
  
   bool exists = false;
-  char diffCharsarray[128];
+  char diffCharsarray[256];
   int difcharcounter = 0;
-
+  
+  //System variables
+  bool bigger100 = true;
   // load params from argv
   if (argc > 2 && argc < 5) {
     
@@ -252,15 +257,25 @@ int main(int argc, char *argv[]) {
     return 3;
   }
 
-  char row[101];
+  char row[102];
   int counter = 0;
   //fprintf(stdout, "STARTED!");
   while (fgets(row, 102, stdin) != NULL) {
-    /*if(row[102] >=' '){
-      fprintf(stderr,"Password bigger than 100 chars.");
-
-      }*/
-    
+    int i = 0;
+    while (row[i] != '\0') {
+      if (row[i] == '\n') {
+        if (i < 101){
+          bigger100 = false;
+          break;
+        }
+      }
+      i++;
+    }
+    if (bigger100)
+    {
+      fprintf(stderr, "Chyba vstupnych parametrov, maximalna dlzka hesla je 100 znakov\n");
+      return 5;
+    }
     
     switch (level) {
     case 1:
@@ -291,6 +306,7 @@ int main(int argc, char *argv[]) {
     if(stats){
       countPass++;
       //findes shortest password and counts all chars
+      
       for(int i = 0; row[i] != '\n';i++){ 
         if(row[i+1] == '\n'){
           countChar += i+1;
